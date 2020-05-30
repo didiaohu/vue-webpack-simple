@@ -3,7 +3,7 @@
  * @Author: 胡博君
  * @Date: 2020-05-27 16:49:51
  * @LastEditors: 胡博君
- * @LastEditTime: 2020-05-29 18:00:32
+ * @LastEditTime: 2020-05-30 18:09:02
  */ 
 var path = require('path');
 var webpack = require('webpack');
@@ -11,13 +11,15 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
-  entry: './src/main.js',
+  entry: {
+    main: './src/main.js'
+  },
   output: {
     path: path.resolve(__dirname, './dist'),
-    publicPath: '/dist/', // 通过devServer访问路径
-    filename: 'build.js'
+    filename: '[name][chunkhash:8].js'
   },
   mode: 'production',
   module: {
@@ -29,16 +31,33 @@ module.exports = {
       {
         test: /\.css$/,
         use: [
-          'style-loader',
+          MiniCssExtractPlugin.loader,
           'css-loader'
         ]
       },
       {
         test: /\.scss$/,
         use: [
-          'style-loader',
+          MiniCssExtractPlugin.loader,
           'css-loader',
-          'sass-loader'
+          'sass-loader',
+          {
+            loader: 'postcss-loader',
+            options: {
+              plugins: () => [
+                require('autoprefixer')({
+                  browsers: ['last 2 version', '>1%', 'ios 7']
+                })
+              ]
+            }
+          },
+          {
+            loader: 'px2rem-loader',
+            options: {
+              remUnit: 75,
+              remPrecision: 8
+            }
+          }
         ]
       },
       {
@@ -71,7 +90,24 @@ module.exports = {
                 'scss': [
                   'vue-style-loader',
                   'css-loader',
-                  'sass-loader'
+                  'sass-loader',
+                  {
+                    loader: 'postcss-loader',
+                    options: {
+                      plugins: () => [
+                        require('autoprefixer')({
+                          browsers: ['last 2 version', '>1%', 'ios 7']
+                        })
+                      ]
+                    }
+                  },
+                  {
+                    loader: 'px2rem-loader',
+                    options: {
+                      remUnit: 75,
+                      remPrecision: 8
+                    }
+                  }
                 ],
                 'sass': [
                   'vue-style-loader',
@@ -88,10 +124,17 @@ module.exports = {
   plugins: [
     new CleanWebpackPlugin(),
     new VueLoaderPlugin(),
+    new MiniCssExtractPlugin({
+      filename: '[name].[contenthash:8].css'
+    }),
+    new OptimizeCSSAssetsPlugin({
+      assetNameRegExp: /\.css$/g,
+      cssProcessor: require('cssnano')
+    }),
     new HtmlWebpackPlugin({
       template: path.join(__dirname, './template/index.html'),
       filename: 'index.html',
-      chunks: ['index'],
+      chunks: ['main'],
       inject: true,
       minify: {
         html5: true,
@@ -100,10 +143,6 @@ module.exports = {
         minifyCSS: true,
         minifyJS: true
       }
-    }),
-    new OptimizeCSSAssetsPlugin({
-      assetNameRegExp: /\.css$/g,
-      cssProcessor: require('cssnano')
     })
   ],
   resolve: {

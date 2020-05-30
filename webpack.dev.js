@@ -3,11 +3,10 @@
  * @Author: 胡博君
  * @Date: 2020-05-27 16:49:51
  * @LastEditors: 胡博君
- * @LastEditTime: 2020-05-29 17:23:34
+ * @LastEditTime: 2020-05-30 18:09:47
  */ 
 var path = require('path');
 var webpack = require('webpack');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
 
 module.exports = {
@@ -36,7 +35,24 @@ module.exports = {
         use: [
           'style-loader',
           'css-loader',
-          'sass-loader'
+          'sass-loader',
+          {
+            loader: 'postcss-loader',
+            options: {
+              plugins: () => [
+                require('autoprefixer')({
+                  browsers: ['last 2 version', '>1%', 'ios 7']
+                })
+              ]
+            }
+          },
+          {
+            loader: 'px2rem-loader',
+            options: {
+              remUnit: 75,
+              remPrecision: 8
+            }
+          }
         ]
       },
       {
@@ -69,7 +85,24 @@ module.exports = {
                 'scss': [
                   'vue-style-loader',
                   'css-loader',
-                  'sass-loader'
+                  'sass-loader',
+                  {
+                    loader: 'postcss-loader',
+                    options: {
+                      plugins: () => [
+                        require('autoprefixer')({
+                          browsers: ['last 2 version', '>1%', 'ios 7']
+                        })
+                      ]
+                    }
+                  },
+                  {
+                    loader: 'px2rem-loader',
+                    options: {
+                      remUnit: 75,
+                      remPrecision: 8
+                    }
+                  }
                 ],
                 'sass': [
                   'vue-style-loader',
@@ -84,7 +117,6 @@ module.exports = {
     ]
   },
   plugins: [
-    new CleanWebpackPlugin(),
     new VueLoaderPlugin()
   ],
   devServer: {
