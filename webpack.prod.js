@@ -2,8 +2,8 @@
  * @Description: 配置
  * @Author: 胡博君
  * @Date: 2020-05-27 16:49:51
- * @LastEditors: 胡博君
- * @LastEditTime: 2020-05-30 18:09:02
+ * @LastEditors: 小小小
+ * @LastEditTime: 2020-06-02 16:30:24
  */ 
 var path = require('path');
 var webpack = require('webpack');
@@ -26,6 +26,7 @@ module.exports = {
     rules: [
       {
         test: /\.js$/,
+        exclude: '/(node_modules|src)/',
         use: 'babel-loader'
       },
       {
@@ -82,6 +83,7 @@ module.exports = {
       },
       {
         test: /\.vue$/,
+        exclude: '/(node_modules|src)/',
         use: [
           {
             loader: 'vue-loader',

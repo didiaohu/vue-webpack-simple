@@ -2,8 +2,8 @@
  * @Description: 配置
  * @Author: 胡博君
  * @Date: 2020-05-27 16:49:51
- * @LastEditors: 胡博君
- * @LastEditTime: 2020-05-30 18:09:47
+ * @LastEditors: 小小小
+ * @LastEditTime: 2020-06-01 00:54:36
  */ 
 var path = require('path');
 var webpack = require('webpack');
@@ -123,6 +123,7 @@ module.exports = {
     historyApiFallback: true,
     overlay: true
   },
+  devtool: 'source-map',
   resolve: {
     alias: {
       'vue$': 'vue/dist/vue.esm.js'
